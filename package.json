@@ -1,0 +1,24 @@
+{
+  "name": "01",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "day01": "node day01Driver.mjs",
+    "day02": "node day02Driver.mjs",
+    "day03": "node day03Driver.mjs",
+    "day04": "node day04Driver.mjs",
+    "day05": "node day05Driver.mjs",
+    "day06": "node day06Driver.mjs",
+    "day07": "node day07Driver.mjs",
+    "day08": "node day08Driver.mjs",
+    "test": "mocha",
+    "watch": "mocha --watch --parallel",
+    "new-day": "node newDay.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^9.1.3"
+  }
+}
