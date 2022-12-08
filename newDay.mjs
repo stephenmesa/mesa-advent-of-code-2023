@@ -1,5 +1,6 @@
 import fs from 'fs';
 import Mustache from 'mustache';
+import npmAddScript from 'npm-add-script';
 
 const dayNum = process.argv[2];
 
@@ -32,3 +33,5 @@ fs.writeFileSync(`./test/day${dayNum}.test.mjs`, Mustache.render(
     fs.readFileSync('./dayTemplate/day.test.mjs.mustache', 'utf8'),
     { dayNumber: dayNum }
 ));
+
+npmAddScript({key: `day${dayNum}` , value: `node day${dayNum}Driver.mjs`})
