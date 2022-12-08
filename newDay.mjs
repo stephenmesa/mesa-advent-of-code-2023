@@ -1,4 +1,5 @@
 import fs from 'fs';
+import Mustache from 'mustache';
 
 const dayNum = process.argv[2];
 
@@ -7,8 +8,27 @@ if (!dayNum) {
     process.exit(1);
 }
 
-fs.copyFileSync('./dayTemplate/day-simple.txt', `./inputs/day${dayNum}-simple.txt`);
-fs.copyFileSync('./dayTemplate/day.txt', `./inputs/day${dayNum}.txt`);
-fs.copyFileSync('./dayTemplate/day.mjs', `./day${dayNum}.mjs`);
-fs.copyFileSync('./dayTemplate/dayXDriver.mjs', `./day${dayNum}Driver.mjs`);
-fs.copyFileSync('./dayTemplate/day.test.mjs', `./test/day${dayNum}.test.mjs`);
+fs.writeFileSync(`./inputs/day${dayNum}-simple.txt`, Mustache.render(
+    fs.readFileSync('./dayTemplate/day-simple.txt.mustache', 'utf8'),
+    { dayNumber: dayNum }
+));
+
+fs.writeFileSync(`./inputs/day${dayNum}.txt`, Mustache.render(
+    fs.readFileSync('./dayTemplate/day.txt.mustache', 'utf8'),
+    { dayNumber: dayNum }
+));
+
+fs.writeFileSync(`./day${dayNum}.mjs`, Mustache.render(
+    fs.readFileSync('./dayTemplate/day.mjs.mustache', 'utf8'),
+    { dayNumber: dayNum }
+));
+
+fs.writeFileSync(`./day${dayNum}Driver.mjs`, Mustache.render(
+    fs.readFileSync('./dayTemplate/dayXDriver.mjs.mustache', 'utf8'),
+    { dayNumber: dayNum }
+));
+
+fs.writeFileSync(`./test/day${dayNum}.test.mjs`, Mustache.render(
+    fs.readFileSync('./dayTemplate/day.test.mjs.mustache', 'utf8'),
+    { dayNumber: dayNum }
+));

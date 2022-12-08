@@ -1,0 +1,11 @@
+import fs from 'fs';
+
+const input = fs.readFileSync('inputs/day{{dayNumber}}.txt').toString().split('\n');
+
+import {
+    calc1,
+    calc2,
+} from './day{{dayNumber}}.mjs';
+
+console.log('Day {{dayNumber}} - Part 1', calc1(input));
+console.log('Day {{dayNumber}} - Part 2', calc2(input));
