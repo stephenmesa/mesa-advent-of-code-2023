@@ -6,16 +6,9 @@ const testInput = fs.readFileSync('inputs/day09-simple.txt').toString().split('\
 import {
     calc1,
     calc2,
-    getNewTailCoordinates,
 } from '../day09.mjs';
 
 describe('Day 09', () => {
-    describe('getNewTailCoordinates()', () => {
-        it('case 1', () => {
-            const target = getNewTailCoordinates({x: 4, y: 1}, {x: 2, y: 0}, 'u');
-            assert.deepEqual(target, { x: 3, y: 1});
-        });
-    });
     it('Part 1', () => {
         const target = calc1(testInput);
         assert.equal(target, 13);

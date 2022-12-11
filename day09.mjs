@@ -1,186 +1,108 @@
-const getNewHeadCoordinates = (board, direction) => {
+const parseMotion = (motion) => {
+    const chunks = motion.split(' ');
+    return {
+        direction: chunks[0],
+        distance: chunks[1],
+    };
+};
+
+const moveCoordinate = (coordinate, direction) => {
     switch (direction.toLowerCase()) {
-        case 'r':
-            return {
-                x: board.head.x + 1,
-                y: board.head.y,
-            };
-        case 'd':
-            return {
-                x: board.head.x,
-                y: board.head.y - 1,
-            };
         case 'l':
             return {
-                x: board.head.x - 1,
-                y: board.head.y,
+                x: coordinate.x - 1,
+                y: coordinate.y,
+            };
+        case 'r':
+            return {
+                x: coordinate.x + 1,
+                y: coordinate.y,
             };
         case 'u':
             return {
-                x: board.head.x,
-                y: board.head.y + 1,
+                x: coordinate.x,
+                y: coordinate.y + 1,
             };
+        case 'd':
+            return {
+                x: coordinate.x,
+                y: coordinate.y - 1,
+            };
+        default:
+            break;
     }
 };
 
-export const getNewTailCoordinates = (head, tail, directionMoved) => {
-    // console.log({
-    //     head, tail, directionMoved
-    // });
-    const xDiff = Math.abs(head.x - tail.x);
-    const yDiff = Math.abs(head.y - tail.y);
+const followKnot = (knot, previousKnot) => {
+    const areTouching = Math.abs(knot.x - previousKnot.x) <= 1 && Math.abs(knot.y - previousKnot.y) <= 1;
 
-    const tailMustMove = xDiff > 1 || yDiff > 1;
-    const isDiagonal = xDiff > 0 && yDiff > 0;
-
-    // console.log({
-    //     xDiff,
-    //     yDiff,
-    //     tailMustMove,
-    //     isDiagonal,
-    // });
-
-    if (!tailMustMove) {
-        return tail;
+    if (areTouching) {
+        return knot;
     }
 
-    if (!isDiagonal) {
-        
-
-        switch (directionMoved.toLowerCase()) {
-            case 'r':
-                return {
-                    // x: tail.x + 1,
-                    x: head.x - 1,
-                    y: head.y,
-                };
-            case 'd':
-                return {
-                    x: head.x,
-                    // y: tail.y - 1,
-                    y: head.y + 1,
-                };
-            case 'l':
-                return {
-                    // x: tail.x - 1,
-                    x: head.x + 1,
-                    y: head.y,
-                };
-            case 'u':
-                return {
-                    x: head.x,
-                    // y: tail.y + 1,
-                    y: head.y - 1,
-                };
-        }
-    } else {
-        // Determine which diagonal direction to move
-        const xDir = head.x > tail.x;
-        const yDir = head.y > tail.y;
-        const diagDir = `${xDir ? 'r' : 'l'}${yDir ? 'u' : 'd'}`;
-
-        switch (diagDir) {
-            case 'ru':
-                return {
-                    x: tail.x + 1,
-                    y: tail.y + 1,
-                };
-            case 'rd':
-                return {
-                    x: tail.x + 1,
-                    y: tail.y - 1,
-                };
-            case 'lu':
-                return {
-                    x: tail.x - 1,
-                    y: tail.y + 1,
-                };
-            case 'ld':
-                return {
-                    x: tail.x - 1,
-                    y: tail.y - 1,
-                };
-        }
+    // Check if 2 steps directly up, down, left, or right
+    if (knot.x === previousKnot.x && previousKnot.y - knot.y >= 2) {
+        // Directly up
+        // Move knot 1 step in that direction
+        return moveCoordinate(knot, 'u');
+    } else if (knot.x === previousKnot.x && knot.y - previousKnot.y >= 2) {
+        // Directly down
+        // Move knot 1 step in that direction
+        return moveCoordinate(knot, 'd');
+    } else if (knot.y === previousKnot.y && previousKnot.x - knot.x >= 2) {
+        // Directly right
+        // Move knot 1 step in that direction
+        return moveCoordinate(knot, 'r');
+    } else if (knot.y === previousKnot.y && knot.x - previousKnot.x >= 2) {
+        // Directly left
+        // Move knot 1 step in that direction
+        return moveCoordinate(knot, 'l');
     }
-};
 
-const processCommand = (board, direction) => {
-    // console.log('processCommand', { direction });
-    // move head
-    const newHeadCoordinates = getNewHeadCoordinates(board, direction);
-
-    // determine fate of tail
-    const newTailCoordinates = getNewTailCoordinates(newHeadCoordinates, board.tail, direction);
-
-    // console.log({
-    //     newHeadCoordinates,
-    //     newTailCoordinates,
-    // });
-
-    board.head = newHeadCoordinates;
-    board.tail = newTailCoordinates;
-    board.tailHistory.push(newTailCoordinates);
-
-    return board;
-};
-
-const processCommand2 = (board, direction) => {
-    // console.log('processCommand', { direction });
-    // move head
-    const newHeadCoordinates = getNewHeadCoordinates(board, direction);
+    // Move diagonally toward previous knot
+    const firstMove = previousKnot.x > knot.x ? 'r' : 'l';
+    const secondMove = previousKnot.y > knot.y ? 'u' : 'd';
     
-    const newKnots = {};
-    let previousKnotCoordinates = newHeadCoordinates;
+    knot = moveCoordinate(knot, firstMove);
+    knot = moveCoordinate(knot, secondMove);
 
-    const knotKeys = Object.keys(board.knots);
-    for (let index = 0; index < knotKeys.length; index++) {
-        const knotKey = knotKeys[index];
-        newKnots[knotKey] = getNewTailCoordinates(previousKnotCoordinates, board.knots[knotKey], direction);
-        previousKnotCoordinates = newKnots[knotKey];
-        // console.log({ previousKnotCoordinates });
-    }
-
-    // determine fate of tail
-    // const newTailCoordinates = getNewTailCoordinates(newHeadCoordinates, board.tail, direction);
-
-    // console.log({
-    //     newHeadCoordinates,
-    //     newTailCoordinates,
-    // });
-
-    board.head = newHeadCoordinates;
-    board.knots = newKnots;
-    board.tailHistory.push(previousKnotCoordinates);
-
-    // console.log({
-    //     head: board.head,
-    //     knots: board.knots,
-    //     tailHistory: board.tailHistory,
-    // });
-
-    return board;
+    return knot;
 };
 
-const processCommands = (board, command, part2 = false) => {
-    for (let index = 0; index < command.steps; index++) {
-        if (part2) {
-            board = processCommand2(board, command.direction);    
-        } else {
-            board = processCommand(board, command.direction);
-        }
+const processMove = (rope, direction) => {
+    // First move the head knot
+    rope.head = moveCoordinate(rope.head, direction);
+    // The first knot is the head, so update first knot
+    rope.knots[0] = rope.head;
+
+    // Then reconcile every subsequent knot
+    for (let index = 1; index < rope.knots.length; index++) {
+        const previousKnot = rope.knots[index-1];
+        const knot = rope.knots[index];
+        rope.knots[index] = followKnot(knot, previousKnot);
     }
 
-    return board;
+    // Record tail position history
+    rope.tailHistory.push(rope.knots[rope.knots.length-1]);
+
+    return rope;
 };
 
-const parseCommand = (line) => {
-    const chunks = line.split(' ');
+const processMotion = (rope, motion) => {
+    for (let index = 0; index < motion.distance; index++) {
+        rope = processMove(rope, motion.direction);
+    }
 
-    return {
-        direction: chunks[0],
-        steps: Number(chunks[1]),
-    };
-}
+    return rope;
+};
+
+const processMotions = (rope, motions) => {
+    motions.forEach(motion => {
+        rope = processMotion(rope, motion);
+    });
+
+    return rope;
+};
 
 const onlyUniqueCoordinates = (value, index, self) => self.findIndex(v => v.x === value.x && v.y === value.y) === index;
 
@@ -189,82 +111,57 @@ const getUniqueCoordinates = (coords) => {
 };
 
 export const calc1 = (input) => {
-    const commands = input.map(parseCommand);
-
-    // console.log({ commands });
-
-    let board = {
-        start: {
-            x: 0,
-            y: 0,
-        },
-        head: {
-            x: 0,
-            y: 0,
-        },
-        tail: {
-            x: 0,
-            y: 0,
-        },
-        tailHistory: [
-            {
-                x: 0,
-                y: 0,
-            },
-        ]
+    const start = {
+        x: 0,
+        y: 0,
+    };
+    const rope = {
+        start,
+        head: start,
+        knots: [
+            start,
+            start,
+        ],
+        tailHistory: [start]
     };
 
-    commands.forEach((command) => {
-        board = processCommands(board, command);
-    });
+    const motions = input.map(parseMotion);
 
-    // console.log(board.tailHistory);
+    const processedRope = processMotions(rope, motions);
 
-    const uniqueTailHistory = getUniqueCoordinates(board.tailHistory);
+    const tailCoordinates = getUniqueCoordinates(processedRope.tailHistory);
 
-    console.log(uniqueTailHistory);
-
-    return uniqueTailHistory.length;
+    return tailCoordinates.length;
 }
 
 export const calc2 = (input) => {
-    const commands = input.map(parseCommand);
-
-    // console.log({ commands });
-
-    const startCoord = { x: 0, y: 0 };
-
-    let board = {
-        start: startCoord,
-        head: startCoord,
-        knots: {
-            1: startCoord,
-            2: startCoord,
-            3: startCoord,
-            4: startCoord,
-            5: startCoord,
-            6: startCoord,
-            7: startCoord,
-            8: startCoord,
-            9: startCoord,
-        },
-        tailHistory: [
-            {
-                x: 0,
-                y: 0,
-            },
-        ]
+    const start = {
+        x: 0,
+        y: 0,
+    };
+    const rope = {
+        start,
+        head: start,
+        knots: [
+            start,
+            start,
+            start,
+            start,
+            start,
+            start,
+            start,
+            start,
+            start,
+            start,
+        ],
+        tailHistory: [start]
     };
 
-    commands.forEach((command) => {
-        board = processCommands(board, command, true);
-    });
+    const motions = input.map(parseMotion);
 
-    // console.log(board.tailHistory);
+    const processedRope = processMotions(rope, motions);
 
-    const uniqueTailHistory = getUniqueCoordinates(board.tailHistory);
+    const tailCoordinates = getUniqueCoordinates(processedRope.tailHistory);
 
-    // console.log(uniqueTailHistory);
-
-    return uniqueTailHistory.length;
+    return tailCoordinates.length;
 }
