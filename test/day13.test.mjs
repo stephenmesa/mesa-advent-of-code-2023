@@ -1,20 +1,20 @@
 import fs from 'fs';
 import assert from 'assert';
 
-const testInput = fs.readFileSync('inputs/day12-simple.txt').toString().split('\n');
+const testInput = fs.readFileSync('inputs/day13-simple.txt').toString().split('\n');
 
 import {
     calc1,
     calc2,
-} from '../day12.mjs';
+} from '../day13.mjs';
 
-describe.skip('Day 12', () => {
+describe('Day 13', () => {
     it('Part 1', () => {
         const target = calc1(testInput);
-        assert.equal(target, 31);
+        assert.equal(target, 13);
     });
     it('Part 2', () => {
         const target = calc2(testInput);
-        assert.equal(target, -1);
+        assert.equal(target, 140);
     });
 });
