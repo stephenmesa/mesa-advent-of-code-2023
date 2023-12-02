@@ -7,7 +7,8 @@
     "day01": "node day01Driver.mjs",
     "test": "mocha",
     "watch": "mocha --watch --parallel",
-    "new-day": "node newDay.mjs"
+    "new-day": "node newDay.mjs",
+    "day02": "node day02Driver.mjs"
   },
   "author": "",
   "license": "ISC",
