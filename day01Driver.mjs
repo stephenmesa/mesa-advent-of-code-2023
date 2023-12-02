@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const input = fs.readFileSync('inputs/day01.txt').toString().split('\n').map(Number);
+const input = fs.readFileSync('inputs/day01.txt').toString().split('\n');
 
 import {
     calc1,

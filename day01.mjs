@@ -1,32 +1,54 @@
-// export const calculateSums = (input) => {
-//     const sums = [];
-//     let currentSum = 0;
-//     for (let index = 0; index < input.length; index++) {
-//         const element = input[index];
-//         if (element > 0) {
-//             currentSum += element;
-//         } else {
-//             sums.push(currentSum);
-//             currentSum = 0;
-//         }
-//     }
-//     if (currentSum > 0) {
-//         sums.push(currentSum);
-//         currentSum = 0;
-//     }
+const parseInput = (input) => {
+    return input.toString().split('').filter(isFinite);
+}
 
-//     return sums;
-// }
+const numberWords = {
+    'one': 1,
+    'two': 2,
+    'three': 3,
+    'four': 4,
+    'five': 5,
+    'six': 6,
+    'seven': 7,
+    'eight': 8,
+    'nine': 9,
+    'zero': 0,
+};
 
-export const calculateSums = (input) => input.join(',').split(',0,').map(g => g.split(',').reduce((a, v) => a+Number(v), 0));
+const parseInput2 = (input) => {
+    return input.toString().split('').map((char, index, arr) => {
+        if (isFinite(char)) {
+            return Number(char);
+        } else {
+            // must be a character, see if it matches a number word
+            const remainingChars = arr.slice(index).join('');
+            for (const key in numberWords) {
+                if (Object.hasOwnProperty.call(numberWords, key)) {
+                    if(remainingChars.startsWith(key)) {
+                        return numberWords[key];
+                    }
+                }
+            }
+        }
+
+        return null;
+    }).filter(x => x != null);
+};
+
+const calculateCalibration = (input) => {
+    const nums = parseInput(input);
+    return nums[0] + nums[nums.length - 1];
+};
+
+const calculateCalibration2 = (input) => {
+    const nums = parseInput2(input);
+    return nums[0].toString() + nums[nums.length - 1].toString();
+};
 
 export const calc1 = (input) => {
-    const sums = calculateSums(input);
-    return Math.max(...sums);
+    return input.map(calculateCalibration).map(Number).reduce((a, b) => a + b, 0);
 };
 
 export const calc2 = (input) => {
-    const sums = calculateSums(input);
-    sums.sort((a,b) => b-a);
-    return sums[0] + sums[1] + sums[2];
+    return input.map(calculateCalibration2).map(Number).reduce((a, b) => a + b, 0);
 };
