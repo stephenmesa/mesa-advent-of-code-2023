@@ -1,5 +1,5 @@
-# 🌟🎄🌟 Advent of Code 2022 🌟🎄🌟
-This is my personal collection of answers to the 2022 edition of Advent of Code.
+# 🌟🎄🌟 Advent of Code 2023 🌟🎄🌟
+This is my personal collection of answers to the 2023 edition of Advent of Code.
 
 This may not be the best code, or fastest code, but it's mine!
 
