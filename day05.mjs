@@ -114,12 +114,10 @@ export const calc2 = (input) => {
 
     let minFinal = Number.MAX_SAFE_INTEGER;
     almanac.seeds.forEach(s => {
-        console.log('Starting seed range: ', s);
         for (let seedNum = s.start; seedNum < s.start + s.len; seedNum++) {
             const finalConversion = recursivelyConvertUnit(seedNum, 'seed', almanac);
             if (finalConversion < minFinal) {
                 minFinal = finalConversion;
-                console.log({ minFinal });
             }
         }
     });
