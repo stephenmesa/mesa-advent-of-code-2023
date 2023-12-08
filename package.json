@@ -13,11 +13,14 @@
     "day04": "node day04Driver.mjs",
     "day05": "node day05Driver.mjs",
     "day06": "node day06Driver.mjs",
-    "day07": "node day07Driver.mjs"
+    "day07": "node day07Driver.mjs",
+    "day08": "node day08Driver.mjs"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "compute-lcm": "^1.1.2",
+    "lcm": "^0.0.3",
     "mocha": "^9.1.3",
     "mustache": "^4.2.0",
     "npm-add-script": "^1.1.0"
